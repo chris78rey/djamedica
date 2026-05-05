@@ -3,27 +3,60 @@
 {% block title %}Detalle usuario | Djamedica{% endblock %}
 
 {% block content %}
-    <h1 class="page-title">Detalle de usuario</h1>
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Detalle de usuario</h1>
+            <p class="muted">Información de cuenta, rol y estado de acceso.</p>
+        </div>
+        <div class="actions" style="margin:0;">
+            <a href="{% url 'users:edit' item.id %}">Editar</a>
+            <a href="{% url 'users:manage_list' %}" class="secondary">Volver</a>
+        </div>
+    </div>
 
-    <table>
-        <tbody>
-            <tr><th>ID</th><td>{{ item.id }}</td></tr>
-            <tr><th>Usuario</th><td>{{ item.username }}</td></tr>
-            <tr><th>Correo</th><td>{{ item.email }}</td></tr>
-            <tr><th>Nombres</th><td>{{ item.first_name }}</td></tr>
-            <tr><th>Apellidos</th><td>{{ item.last_name }}</td></tr>
-            <tr><th>Rol</th><td>{{ item.role }}</td></tr>
-            <tr><th>Teléfono</th><td>{{ item.phone }}</td></tr>
-            <tr><th>Activo</th><td>{{ item.is_active }}</td></tr>
-            <tr><th>Staff</th><td>{{ item.is_staff }}</td></tr>
-            <tr><th>Superusuario</th><td>{{ item.is_superuser }}</td></tr>
-            <tr><th>Último ingreso</th><td>{{ item.last_login }}</td></tr>
-            <tr><th>Fecha alta</th><td>{{ item.date_joined }}</td></tr>
-        </tbody>
-    </table>
-
-    <div class="actions">
-        <a href="{% url 'users:edit' item.id %}">Editar</a>
-        <a href="{% url 'users:manage_list' %}" class="secondary">Volver</a>
+    <div class="table-card">
+        <table>
+            <tbody>
+                <tr><th>ID</th><td>{{ item.id }}</td></tr>
+                <tr><th>Usuario</th><td>{{ item.username }}</td></tr>
+                <tr><th>Correo</th><td>{{ item.email }}</td></tr>
+                <tr><th>Nombres</th><td>{{ item.first_name }}</td></tr>
+                <tr><th>Apellidos</th><td>{{ item.last_name }}</td></tr>
+                <tr><th>Rol</th><td><span class="badge info">{{ item.role }}</span></td></tr>
+                <tr><th>Teléfono</th><td>{{ item.phone }}</td></tr>
+                <tr>
+                    <th>Activo</th>
+                    <td>
+                        {% if item.is_active %}
+                            <span class="badge success">Sí</span>
+                        {% else %}
+                            <span class="badge danger">No</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Staff</th>
+                    <td>
+                        {% if item.is_staff %}
+                            <span class="badge success">Sí</span>
+                        {% else %}
+                            <span class="badge">No</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Superusuario</th>
+                    <td>
+                        {% if item.is_superuser %}
+                            <span class="badge success">Sí</span>
+                        {% else %}
+                            <span class="badge">No</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr><th>Último ingreso</th><td>{{ item.last_login }}</td></tr>
+                <tr><th>Fecha alta</th><td>{{ item.date_joined }}</td></tr>
+            </tbody>
+        </table>
     </div>
 {% endblock %}

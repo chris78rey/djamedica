@@ -3,7 +3,17 @@
 {% block title %}Doctores | Djamedica{% endblock %}
 
 {% block content %}
-    <h1 class="page-title">Doctores</h1>
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Doctores</h1>
+            <p class="muted">Gestión de profesionales y disponibilidad para agenda.</p>
+        </div>
+        {% if request.user.is_superuser or request.user.role == "ADMIN" %}
+            <div class="actions" style="margin:0;">
+                <a href="{% url 'doctors:create' %}">Nuevo doctor</a>
+            </div>
+        {% endif %}
+    </div>
 
     <form method="get" class="filters">
         <div class="full">
@@ -32,54 +42,56 @@
             </select>
         </div>
 
-        <div class="actions">
+        <div class="actions" style="margin:0;">
             <button type="submit">Filtrar</button>
             <a href="{% url 'doctors:manage_list' %}" class="secondary">Limpiar</a>
         </div>
     </form>
 
-    {% if request.user.is_superuser or request.user.role == "ADMIN" %}
-        <div class="actions">
-            <a href="{% url 'doctors:create' %}">Nuevo doctor</a>
-        </div>
-    {% endif %}
-
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Especialidad</th>
-                <th>Licencia</th>
-                <th>Disponible</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
+    <div class="table-card">
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.user.get_full_name|default:item.user.username }}</td>
-                    <td>{{ item.specialty.name }}</td>
-                    <td>{{ item.professional_license }}</td>
-                    <td>{{ item.is_available }}</td>
-                    <td class="actions">
-                        <a href="{% url 'doctors:detail' item.id %}">Ver</a>
-                        {% if request.user.is_superuser or request.user.role == "ADMIN" %}
-                            <a href="{% url 'doctors:edit' item.id %}">Editar</a>
-                            <a href="{% url 'doctors:delete' item.id %}" class="danger">Eliminar</a>
-                        {% else %}
-                            <span class="muted">Solo lectura</span>
-                        {% endif %}
-                    </td>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Especialidad</th>
+                    <th>Licencia</th>
+                    <th>Disponible</th>
+                    <th>Acciones</th>
                 </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="6">No existen registros.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.user.get_full_name|default:item.user.username }}</td>
+                        <td>{{ item.specialty.name }}</td>
+                        <td>{{ item.professional_license }}</td>
+                        <td>
+                            {% if item.is_available %}
+                                <span class="badge success">Sí</span>
+                            {% else %}
+                                <span class="badge warning">Pendiente</span>
+                            {% endif %}
+                        </td>
+                        <td class="actions">
+                            <a href="{% url 'doctors:detail' item.id %}">Ver</a>
+                            {% if request.user.is_superuser or request.user.role == "ADMIN" %}
+                                <a href="{% url 'doctors:edit' item.id %}" class="secondary">Editar</a>
+                                <a href="{% url 'doctors:delete' item.id %}" class="danger">Eliminar</a>
+                            {% else %}
+                                <span class="muted">Solo lectura</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-state">No existen registros con los filtros actuales.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     {% include "common/pagination.html" %}
 {% endblock %}

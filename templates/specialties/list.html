@@ -3,7 +3,15 @@
 {% block title %}Especialidades | Djamedica{% endblock %}
 
 {% block content %}
-    <h1 class="page-title">Especialidades</h1>
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Especialidades</h1>
+            <p class="muted">Catálogo de especialidades disponibles para agenda.</p>
+        </div>
+        <div class="actions" style="margin:0;">
+            <a href="{% url 'specialties:create' %}">Nueva especialidad</a>
+        </div>
+    </div>
 
     <form method="get" class="filters">
         <div class="full">
@@ -20,44 +28,48 @@
             </select>
         </div>
 
-        <div class="actions">
+        <div class="actions" style="margin:0;">
             <button type="submit">Filtrar</button>
             <a href="{% url 'specialties:manage_list' %}" class="secondary">Limpiar</a>
         </div>
     </form>
 
-    <div class="actions">
-        <a href="{% url 'specialties:create' %}">Nueva especialidad</a>
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Activa</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>
+                            {% if item.is_active %}
+                                <span class="badge success">Sí</span>
+                            {% else %}
+                                <span class="badge danger">No</span>
+                            {% endif %}
+                        </td>
+                        <td class="actions">
+                            <a href="{% url 'specialties:detail' item.id %}">Ver</a>
+                            <a href="{% url 'specialties:edit' item.id %}" class="secondary">Editar</a>
+                            <a href="{% url 'specialties:delete' item.id %}" class="danger">Eliminar</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="empty-state">No existen registros con los filtros actuales.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Activa</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-                <tr>
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.is_active }}</td>
-                    <td class="actions">
-                        <a href="{% url 'specialties:detail' item.id %}">Ver</a>
-                        <a href="{% url 'specialties:edit' item.id %}">Editar</a>
-                        <a href="{% url 'specialties:delete' item.id %}" class="danger">Eliminar</a>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="4">No existen registros.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
     {% include "common/pagination.html" %}
 {% endblock %}

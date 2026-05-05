@@ -3,21 +3,30 @@
 {% block title %}Registro | Djamedica{% endblock %}
 
 {% block content %}
-    <h1 class="page-title">Crear cuenta</h1>
-    <p class="muted">Seleccione el tipo de registro.</p>
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Crear cuenta</h1>
+            <p class="muted">Seleccione el tipo de cuenta que corresponde.</p>
+        </div>
+        <div class="actions" style="margin:0;">
+            <a href="{% url 'login' %}" class="secondary">Ya tiene cuenta</a>
+        </div>
+    </div>
 
-    <div class="grid" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+    <div class="grid-2">
         <div class="card">
-            <strong>Paciente / usuario</strong>
-            <p class="muted">Crea una cuenta para acceder como paciente.</p>
+            <span class="badge info">Paciente</span>
+            <h2>Paciente / usuario</h2>
+            <p class="muted">Crea una cuenta para acceder al sistema como paciente y consultar sus citas.</p>
             <div class="actions">
                 <a href="{% url 'register_patient' %}">Registrarse como paciente</a>
             </div>
         </div>
 
         <div class="card">
-            <strong>Médico</strong>
-            <p class="muted">Crea una cuenta médica. La agenda queda pendiente de habilitación.</p>
+            <span class="badge warning">Requiere validación</span>
+            <h2>Médico</h2>
+            <p class="muted">Crea una cuenta médica. La agenda queda deshabilitada hasta validación administrativa.</p>
             <div class="actions">
                 <a href="{% url 'register_doctor' %}">Registrarse como médico</a>
             </div>

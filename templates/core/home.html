@@ -3,14 +3,37 @@
 {% block title %}Inicio | Djamedica{% endblock %}
 
 {% block content %}
-    <h1>{{ project_name }}</h1>
-    <p class="muted">Base inicial del sistema en Django puro.</p>
+    <div class="hero">
+        <div>
+            <span class="badge info">Sistema de citas médicas</span>
+            <h1>Atención médica organizada, simple y segura.</h1>
+            <p class="muted">
+                Plataforma para registro de pacientes, médicos, especialidades y citas con una experiencia clara para usuarios y administración.
+            </p>
 
-    <div class="actions">
-        {% if request.user.is_authenticated %}
-            <a href="{% url 'panel' %}">Ir al panel</a>
-        {% else %}
-            <a href="{% url 'login' %}">Ingresar</a>
-        {% endif %}
+            <div class="actions">
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'panel' %}">Ir al panel</a>
+                {% else %}
+                    <a href="{% url 'register_choice' %}">Crear cuenta</a>
+                    <a href="{% url 'login' %}" class="secondary">Ingresar</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="hero-card">
+            <strong>Accesos principales</strong>
+            <p class="muted">El paciente se registra por su cuenta. El médico también puede registrarse, pero su agenda queda pendiente de habilitación administrativa.</p>
+            <div class="grid-2">
+                <div class="card">
+                    <strong>Paciente</strong>
+                    <span class="muted">Cuenta personal para consultar sus citas.</span>
+                </div>
+                <div class="card">
+                    <strong>Médico</strong>
+                    <span class="muted">Perfil profesional validado antes de atender.</span>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

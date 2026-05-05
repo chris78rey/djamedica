@@ -3,29 +3,44 @@
 {% block title %}Detalle doctor | Djamedica{% endblock %}
 
 {% block content %}
-    <h1 class="page-title">Detalle de doctor</h1>
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Detalle de doctor</h1>
+            <p class="muted">Información profesional y estado de disponibilidad.</p>
+        </div>
+        <div class="actions" style="margin:0;">
+            {% if request.user.is_superuser or request.user.role == "ADMIN" %}
+                <a href="{% url 'doctors:edit' item.id %}">Editar</a>
+            {% endif %}
+            <a href="{% url 'doctors:manage_list' %}" class="secondary">Volver</a>
+        </div>
+    </div>
 
-    <table>
-        <tbody>
-            <tr><th>ID</th><td>{{ item.id }}</td></tr>
-            <tr><th>Usuario</th><td>{{ item.user.username }}</td></tr>
-            <tr><th>Nombre</th><td>{{ item.user.get_full_name|default:item.user.username }}</td></tr>
-            <tr><th>Correo</th><td>{{ item.user.email }}</td></tr>
-            <tr><th>Especialidad</th><td>{{ item.specialty.name }}</td></tr>
-            <tr><th>Licencia</th><td>{{ item.professional_license }}</td></tr>
-            <tr><th>Teléfono</th><td>{{ item.phone }}</td></tr>
-            <tr><th>Consultorio</th><td>{{ item.office }}</td></tr>
-            <tr><th>Biografía</th><td>{{ item.bio }}</td></tr>
-            <tr><th>Disponible</th><td>{{ item.is_available }}</td></tr>
-            <tr><th>Creado</th><td>{{ item.created_at }}</td></tr>
-            <tr><th>Actualizado</th><td>{{ item.updated_at }}</td></tr>
-        </tbody>
-    </table>
-
-    <div class="actions">
-        {% if request.user.is_superuser or request.user.role == "ADMIN" %}
-            <a href="{% url 'doctors:edit' item.id %}">Editar</a>
-        {% endif %}
-        <a href="{% url 'doctors:manage_list' %}" class="secondary">Volver</a>
+    <div class="table-card">
+        <table>
+            <tbody>
+                <tr><th>ID</th><td>{{ item.id }}</td></tr>
+                <tr><th>Usuario</th><td>{{ item.user.username }}</td></tr>
+                <tr><th>Nombre</th><td>{{ item.user.get_full_name|default:item.user.username }}</td></tr>
+                <tr><th>Correo</th><td>{{ item.user.email }}</td></tr>
+                <tr><th>Especialidad</th><td>{{ item.specialty.name }}</td></tr>
+                <tr><th>Licencia</th><td>{{ item.professional_license }}</td></tr>
+                <tr><th>Teléfono</th><td>{{ item.phone }}</td></tr>
+                <tr><th>Consultorio</th><td>{{ item.office }}</td></tr>
+                <tr><th>Biografía</th><td>{{ item.bio }}</td></tr>
+                <tr>
+                    <th>Disponible</th>
+                    <td>
+                        {% if item.is_available %}
+                            <span class="badge success">Sí</span>
+                        {% else %}
+                            <span class="badge warning">Pendiente</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr><th>Creado</th><td>{{ item.created_at }}</td></tr>
+                <tr><th>Actualizado</th><td>{{ item.updated_at }}</td></tr>
+            </tbody>
+        </table>
     </div>
 {% endblock %}

@@ -3,30 +3,36 @@
 {% block title %}Detalle cita | Djamedica{% endblock %}
 
 {% block content %}
-    <h1 class="page-title">Detalle de cita</h1>
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Detalle de cita</h1>
+            <p class="muted">Información completa de la cita seleccionada.</p>
+        </div>
+        <div class="actions" style="margin:0;">
+            {% if request.user.is_superuser or request.user.role == "ADMIN" or request.user.role == "STAFF" %}
+                <a href="{% url 'appointments:edit' item.id %}">Editar</a>
+            {% endif %}
+            <a href="{% url 'appointments:manage_list' %}" class="secondary">Volver</a>
+        </div>
+    </div>
 
-    <table>
-        <tbody>
-            <tr><th>ID</th><td>{{ item.id }}</td></tr>
-            <tr><th>Paciente</th><td>{{ item.patient.full_name }}</td></tr>
-            <tr><th>Documento paciente</th><td>{{ item.patient.document_number }}</td></tr>
-            <tr><th>Doctor</th><td>{{ item.doctor.user.get_full_name|default:item.doctor.user.username }}</td></tr>
-            <tr><th>Especialidad</th><td>{{ item.specialty.name }}</td></tr>
-            <tr><th>Fecha inicio</th><td>{{ item.scheduled_at }}</td></tr>
-            <tr><th>Duración</th><td>{{ item.duration_minutes }} minutos</td></tr>
-            <tr><th>Estado</th><td>{{ item.status }}</td></tr>
-            <tr><th>Motivo</th><td>{{ item.reason }}</td></tr>
-            <tr><th>Notas</th><td>{{ item.notes }}</td></tr>
-            <tr><th>Creado por</th><td>{{ item.created_by }}</td></tr>
-            <tr><th>Creado</th><td>{{ item.created_at }}</td></tr>
-            <tr><th>Actualizado</th><td>{{ item.updated_at }}</td></tr>
-        </tbody>
-    </table>
-
-    <div class="actions">
-        {% if request.user.is_superuser or request.user.role == "ADMIN" or request.user.role == "STAFF" %}
-            <a href="{% url 'appointments:edit' item.id %}">Editar</a>
-        {% endif %}
-        <a href="{% url 'appointments:manage_list' %}" class="secondary">Volver</a>
+    <div class="table-card">
+        <table>
+            <tbody>
+                <tr><th>ID</th><td>{{ item.id }}</td></tr>
+                <tr><th>Paciente</th><td>{{ item.patient.full_name }}</td></tr>
+                <tr><th>Documento paciente</th><td>{{ item.patient.document_number }}</td></tr>
+                <tr><th>Doctor</th><td>{{ item.doctor.user.get_full_name|default:item.doctor.user.username }}</td></tr>
+                <tr><th>Especialidad</th><td>{{ item.specialty.name }}</td></tr>
+                <tr><th>Fecha inicio</th><td>{{ item.scheduled_at }}</td></tr>
+                <tr><th>Duración</th><td>{{ item.duration_minutes }} minutos</td></tr>
+                <tr><th>Estado</th><td><span class="badge info">{{ item.status }}</span></td></tr>
+                <tr><th>Motivo</th><td>{{ item.reason }}</td></tr>
+                <tr><th>Notas</th><td>{{ item.notes }}</td></tr>
+                <tr><th>Creado por</th><td>{{ item.created_by }}</td></tr>
+                <tr><th>Creado</th><td>{{ item.created_at }}</td></tr>
+                <tr><th>Actualizado</th><td>{{ item.updated_at }}</td></tr>
+            </tbody>
+        </table>
     </div>
 {% endblock %}
