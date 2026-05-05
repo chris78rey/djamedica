@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Ingreso | Djamedica{% endblock %}
+
+{% block content %}
+    <div class="form-card">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Ingreso al sistema</h1>
+                <p class="muted">Acceda con su usuario y contraseña.</p>
+            </div>
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="message error">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <div class="actions">
+                <button type="submit">Ingresar</button>
+                <a href="{% url 'register_choice' %}" class="secondary">Crear cuenta</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
