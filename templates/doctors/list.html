@@ -3,7 +3,40 @@
 {% block title %}Doctores | Djamedica{% endblock %}
 
 {% block content %}
-    <h1>Doctores</h1>
+    <h1 class="page-title">Doctores</h1>
+
+    <form method="get" class="filters">
+        <div class="full">
+            <label>Buscar</label>
+            <input type="text" name="q" value="{{ filter_q }}" placeholder="Nombre, usuario, correo, licencia o teléfono">
+        </div>
+
+        <div>
+            <label>Especialidad</label>
+            <select name="specialty_id">
+                <option value="">Todas</option>
+                {% for specialty in specialty_choices %}
+                    <option value="{{ specialty.id }}" {% if filter_specialty_id == specialty.id|stringformat:"s" %}selected{% endif %}>
+                        {{ specialty.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label>Disponible</label>
+            <select name="is_available">
+                <option value="">Todos</option>
+                <option value="1" {% if filter_is_available == "1" %}selected{% endif %}>Sí</option>
+                <option value="0" {% if filter_is_available == "0" %}selected{% endif %}>No</option>
+            </select>
+        </div>
+
+        <div class="actions">
+            <button type="submit">Filtrar</button>
+            <a href="{% url 'doctors:manage_list' %}" class="secondary">Limpiar</a>
+        </div>
+    </form>
 
     {% if request.user.is_superuser or request.user.role == "ADMIN" %}
         <div class="actions">
@@ -46,4 +79,6 @@
             {% endfor %}
         </tbody>
     </table>
+
+    {% include "common/pagination.html" %}
 {% endblock %}

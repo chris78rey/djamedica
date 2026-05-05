@@ -7,6 +7,11 @@ from .models import Appointment
 
 
 class AppointmentForm(forms.ModelForm):
+    scheduled_at = forms.DateTimeField(
+        input_formats=["%Y-%m-%dT%H:%M"],
+        widget=forms.DateTimeInput(attrs={"type": "datetime-local"}),
+    )
+
     class Meta:
         model = Appointment
         fields = (
@@ -18,10 +23,8 @@ class AppointmentForm(forms.ModelForm):
             "status",
             "reason",
             "notes",
-            "created_by",
         )
         widgets = {
-            "scheduled_at": forms.DateTimeInput(attrs={"type": "datetime-local"}),
             "reason": forms.Textarea(attrs={"rows": 3}),
             "notes": forms.Textarea(attrs={"rows": 3}),
         }
@@ -29,10 +32,20 @@ class AppointmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields["patient"].queryset = Patient.objects.filter(is_active=True).order_by(
-            "last_name", "first_name"
+        patient_qs = Patient.objects.filter(is_active=True).order_by("last_name", "first_name")
+        doctor_qs = Doctor.objects.select_related("user", "specialty").filter(is_available=True).order_by(
+            "user__last_name", "user__first_name"
         )
-        self.fields["doctor"].queryset = Doctor.objects.select_related("user", "specialty").filter(
-            is_available=True
-        ).order_by("user__last_name", "user__first_name")
-        self.fields["specialty"].queryset = Specialty.objects.filter(is_active=True).order_by("name")
+        specialty_qs = Specialty.objects.filter(is_active=True).order_by("name")
+
+        if self.instance and self.instance.pk:
+            patient_qs = patient_qs | Patient.objects.filter(pk=self.instance.patient_id)
+            doctor_qs = doctor_qs | Doctor.objects.filter(pk=self.instance.doctor_id)
+            specialty_qs = specialty_qs | Specialty.objects.filter(pk=self.instance.specialty_id)
+
+            if self.instance.scheduled_at:
+                self.initial["scheduled_at"] = self.instance.scheduled_at.strftime("%Y-%m-%dT%H:%M")
+
+        self.fields["patient"].queryset = patient_qs.distinct()
+        self.fields["doctor"].queryset = doctor_qs.distinct()
+        self.fields["specialty"].queryset = specialty_qs.distinct()

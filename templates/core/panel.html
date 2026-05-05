@@ -3,29 +3,38 @@
 {% block title %}Panel | Djamedica{% endblock %}
 
 {% block content %}
-    <h1>Panel principal</h1>
+    <h1 class="page-title">Panel principal</h1>
     <p class="muted">Usuario actual: {{ request.user }}</p>
 
     <div class="grid">
         <div class="card">
             <strong>Usuarios</strong>
-            <div>{{ users_count }}</div>
+            <div class="big">{{ users_count }}</div>
         </div>
         <div class="card">
             <strong>Especialidades</strong>
-            <div>{{ specialties_count }}</div>
+            <div class="big">{{ specialties_count }}</div>
         </div>
         <div class="card">
             <strong>Pacientes</strong>
-            <div>{{ patients_count }}</div>
+            <div class="big">{{ patients_count }}</div>
         </div>
         <div class="card">
             <strong>Doctores</strong>
-            <div>{{ doctors_count }}</div>
+            <div class="big">{{ doctors_count }}</div>
         </div>
         <div class="card">
             <strong>Citas</strong>
-            <div>{{ appointments_count }}</div>
+            <div class="big">{{ appointments_count }}</div>
         </div>
+    </div>
+
+    <div class="actions">
+        <a href="{% url 'patients:manage_list' %}">Ver pacientes</a>
+        <a href="{% url 'doctors:manage_list' %}">Ver doctores</a>
+        <a href="{% url 'appointments:manage_list' %}">Ver citas</a>
+        {% if request.user.is_superuser or request.user.role == "ADMIN" %}
+            <a href="{% url 'users:manage_list' %}">Administrar usuarios</a>
+        {% endif %}
     </div>
 {% endblock %}

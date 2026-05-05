@@ -3,7 +3,28 @@
 {% block title %}Especialidades | Djamedica{% endblock %}
 
 {% block content %}
-    <h1>Especialidades</h1>
+    <h1 class="page-title">Especialidades</h1>
+
+    <form method="get" class="filters">
+        <div class="full">
+            <label>Buscar</label>
+            <input type="text" name="q" value="{{ filter_q }}" placeholder="Nombre o descripción">
+        </div>
+
+        <div>
+            <label>Activa</label>
+            <select name="is_active">
+                <option value="">Todas</option>
+                <option value="1" {% if filter_is_active == "1" %}selected{% endif %}>Sí</option>
+                <option value="0" {% if filter_is_active == "0" %}selected{% endif %}>No</option>
+            </select>
+        </div>
+
+        <div class="actions">
+            <button type="submit">Filtrar</button>
+            <a href="{% url 'specialties:manage_list' %}" class="secondary">Limpiar</a>
+        </div>
+    </form>
 
     <div class="actions">
         <a href="{% url 'specialties:create' %}">Nueva especialidad</a>
@@ -36,4 +57,6 @@
             {% endfor %}
         </tbody>
     </table>
+
+    {% include "common/pagination.html" %}
 {% endblock %}

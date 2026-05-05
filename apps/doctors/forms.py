@@ -23,7 +23,10 @@ class DoctorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        qs = User.objects.filter(role=User.Role.DOCTOR)
+        used_user_ids = Doctor.objects.exclude(pk=self.instance.pk).values_list("user_id", flat=True)
+
+        qs = User.objects.filter(role=User.Role.DOCTOR).exclude(id__in=used_user_ids)
+
         if self.instance and self.instance.pk:
             qs = qs | User.objects.filter(pk=self.instance.user_id)
 

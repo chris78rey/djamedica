@@ -1,8 +1,15 @@
+from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
-from apps.core.mixins import AdminRequiredMixin, ClinicalAccessRequiredMixin
+from apps.core.mixins import (
+    AdminRequiredMixin,
+    ClinicalAccessRequiredMixin,
+    DeleteSuccessMessageMixin,
+)
+from apps.specialties.models import Specialty
 from .forms import DoctorForm
 from .models import Doctor
 
@@ -40,16 +47,50 @@ class DoctorManageListView(ClinicalAccessRequiredMixin, ListView):
     model = Doctor
     template_name = "doctors/list.html"
     context_object_name = "items"
-    queryset = Doctor.objects.select_related("user", "specialty").order_by(
-        "user__last_name", "user__first_name"
-    )
+    paginate_by = 10
+
+    def get_queryset(self):
+        qs = Doctor.objects.select_related("user", "specialty").order_by(
+            "user__last_name", "user__first_name"
+        )
+
+        q = self.request.GET.get("q", "").strip()
+        specialty_id = self.request.GET.get("specialty_id", "").strip()
+        is_available = self.request.GET.get("is_available", "").strip()
+
+        if q:
+            qs = qs.filter(
+                Q(user__username__icontains=q)
+                | Q(user__first_name__icontains=q)
+                | Q(user__last_name__icontains=q)
+                | Q(user__email__icontains=q)
+                | Q(professional_license__icontains=q)
+                | Q(phone__icontains=q)
+            )
+
+        if specialty_id.isdigit():
+            qs = qs.filter(specialty_id=int(specialty_id))
+
+        if is_available in {"1", "0"}:
+            qs = qs.filter(is_available=(is_available == "1"))
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["filter_q"] = self.request.GET.get("q", "").strip()
+        context["filter_specialty_id"] = self.request.GET.get("specialty_id", "").strip()
+        context["filter_is_available"] = self.request.GET.get("is_available", "").strip()
+        context["specialty_choices"] = Specialty.objects.filter(is_active=True).order_by("name")
+        return context
 
 
-class DoctorCreateView(AdminRequiredMixin, CreateView):
+class DoctorCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
     model = Doctor
     form_class = DoctorForm
     template_name = "common/form.html"
     success_url = reverse_lazy("doctors:manage_list")
+    success_message = "Doctor creado correctamente."
     extra_context = {
         "page_title": "Crear doctor",
         "submit_label": "Guardar",
@@ -57,11 +98,12 @@ class DoctorCreateView(AdminRequiredMixin, CreateView):
     }
 
 
-class DoctorUpdateView(AdminRequiredMixin, UpdateView):
+class DoctorUpdateView(AdminRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Doctor
     form_class = DoctorForm
     template_name = "common/form.html"
     success_url = reverse_lazy("doctors:manage_list")
+    success_message = "Doctor actualizado correctamente."
     extra_context = {
         "page_title": "Editar doctor",
         "submit_label": "Actualizar",
@@ -69,10 +111,11 @@ class DoctorUpdateView(AdminRequiredMixin, UpdateView):
     }
 
 
-class DoctorDeleteView(AdminRequiredMixin, DeleteView):
+class DoctorDeleteView(AdminRequiredMixin, DeleteSuccessMessageMixin, DeleteView):
     model = Doctor
     template_name = "common/confirm_delete.html"
     success_url = reverse_lazy("doctors:manage_list")
+    success_message = "Doctor eliminado correctamente."
     extra_context = {
         "page_title": "Eliminar doctor",
         "cancel_url": reverse_lazy("doctors:manage_list"),

@@ -3,7 +3,13 @@
 {% block title %}{{ page_title }} | Djamedica{% endblock %}
 
 {% block content %}
-    <h1>{{ page_title }}</h1>
+    <h1 class="page-title">{{ page_title }}</h1>
+
+    {% if form.non_field_errors %}
+        <div class="message error">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
 
     <form method="post">
         {% csrf_token %}

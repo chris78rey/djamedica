@@ -1,9 +1,10 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
-from apps.core.mixins import AdminRequiredMixin
+from apps.core.mixins import AdminRequiredMixin, DeleteSuccessMessageMixin
 from .forms import UserCreateForm, UserUpdateForm
 from .models import User
 
@@ -39,14 +40,46 @@ class UserManageListView(AdminRequiredMixin, ListView):
     model = User
     template_name = "users/list.html"
     context_object_name = "items"
-    queryset = User.objects.order_by("id")
+    paginate_by = 10
+
+    def get_queryset(self):
+        qs = User.objects.order_by("id")
+
+        q = self.request.GET.get("q", "").strip()
+        role = self.request.GET.get("role", "").strip()
+        is_active = self.request.GET.get("is_active", "").strip()
+
+        if q:
+            qs = qs.filter(
+                Q(username__icontains=q)
+                | Q(email__icontains=q)
+                | Q(first_name__icontains=q)
+                | Q(last_name__icontains=q)
+            )
+
+        if role in {choice[0] for choice in User.Role.choices}:
+            qs = qs.filter(role=role)
+
+        if is_active in {"1", "0"}:
+            qs = qs.filter(is_active=(is_active == "1"))
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["filter_q"] = self.request.GET.get("q", "").strip()
+        context["filter_role"] = self.request.GET.get("role", "").strip()
+        context["filter_is_active"] = self.request.GET.get("is_active", "").strip()
+        context["role_choices"] = User.Role.choices
+        return context
 
 
-class UserCreateView(AdminRequiredMixin, CreateView):
+class UserCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
     model = User
     form_class = UserCreateForm
     template_name = "common/form.html"
     success_url = reverse_lazy("users:manage_list")
+    success_message = "Usuario creado correctamente."
     extra_context = {
         "page_title": "Crear usuario",
         "submit_label": "Guardar",
@@ -54,11 +87,12 @@ class UserCreateView(AdminRequiredMixin, CreateView):
     }
 
 
-class UserUpdateView(AdminRequiredMixin, UpdateView):
+class UserUpdateView(AdminRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
     template_name = "common/form.html"
     success_url = reverse_lazy("users:manage_list")
+    success_message = "Usuario actualizado correctamente."
     extra_context = {
         "page_title": "Editar usuario",
         "submit_label": "Actualizar",
@@ -66,10 +100,11 @@ class UserUpdateView(AdminRequiredMixin, UpdateView):
     }
 
 
-class UserDeleteView(AdminRequiredMixin, DeleteView):
+class UserDeleteView(AdminRequiredMixin, DeleteSuccessMessageMixin, DeleteView):
     model = User
     template_name = "common/confirm_delete.html"
     success_url = reverse_lazy("users:manage_list")
+    success_message = "Usuario eliminado correctamente."
     extra_context = {
         "page_title": "Eliminar usuario",
         "cancel_url": reverse_lazy("users:manage_list"),

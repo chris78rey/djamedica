@@ -1,5 +1,7 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
+
 
 ROLE_ADMIN = "ADMIN"
 ROLE_STAFF = "STAFF"
@@ -34,3 +36,13 @@ class StaffOrAdminRequiredMixin(RoleRequiredMixin):
 
 class ClinicalAccessRequiredMixin(RoleRequiredMixin):
     allowed_roles = (ROLE_ADMIN, ROLE_STAFF, ROLE_DOCTOR)
+
+
+class DeleteSuccessMessageMixin:
+    success_message = ""
+
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        if self.success_message:
+            messages.success(request, self.success_message)
+        return response
