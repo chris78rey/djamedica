@@ -7,6 +7,16 @@
 </head>
 <body>
     <h1>{{ project_name }}</h1>
-    <p>Proyecto base en Django.</p>
+    <p>Base inicial en Django puro.</p>
+
+    <ul>
+        <li><a href="{% url 'health' %}">Health</a></li>
+        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li><a href="{% url 'users:list' %}">Usuarios</a></li>
+        <li><a href="{% url 'specialties:list' %}">Especialidades</a></li>
+        <li><a href="{% url 'patients:list' %}">Pacientes</a></li>
+        <li><a href="{% url 'doctors:list' %}">Doctores</a></li>
+        <li><a href="{% url 'appointments:list' %}">Citas</a></li>
+    </ul>
 </body>
 </html>

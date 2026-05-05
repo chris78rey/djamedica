@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.getenv("SECRET_KEY", "CAMBIAR_ESTA_CLAVE")
@@ -23,6 +24,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "apps.core",
+    "apps.users",
+    "apps.specialties",
+    "apps.patients",
+    "apps.doctors",
+    "apps.appointments",
 ]
 
 MIDDLEWARE = [
@@ -69,7 +75,9 @@ TIME_ZONE = "America/Guayaquil"
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTH_USER_MODEL = "users.User"
