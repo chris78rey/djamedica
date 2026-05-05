@@ -1,13 +1,16 @@
+from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.utils import timezone
 
 from apps.appointments.models import Appointment
 from apps.doctors.models import Doctor
 from apps.patients.models import Patient
 from apps.specialties.models import Specialty
+from apps.users.forms import DoctorSelfRegistrationForm, PatientSelfRegistrationForm
 from apps.users.models import User
 
 
@@ -46,8 +49,10 @@ def panel(request):
         "specialty",
     )
 
-    if getattr(user, "role", None) == "DOCTOR" and not user.is_superuser:
+    if getattr(user, "role", None) == User.Role.DOCTOR and not user.is_superuser:
         appointments_qs = appointments_qs.filter(doctor__user=user)
+    elif getattr(user, "role", None) == User.Role.PATIENT and not user.is_superuser:
+        appointments_qs = appointments_qs.filter(patient__user=user)
 
     metrics = appointments_qs.aggregate(
         total=Count("id"),
@@ -94,3 +99,65 @@ def panel(request):
         "specialty_stats": specialty_stats,
     }
     return render(request, "core/panel.html", context)
+
+
+def register_choice(request):
+    if request.user.is_authenticated:
+        return redirect("panel")
+
+    return render(request, "registration/register_choice.html")
+
+
+def register_patient(request):
+    if request.user.is_authenticated:
+        return redirect("panel")
+
+    if request.method == "POST":
+        form = PatientSelfRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Registro de paciente completado correctamente.")
+            return redirect("panel")
+    else:
+        form = PatientSelfRegistrationForm()
+
+    return render(
+        request,
+        "registration/register_form.html",
+        {
+            "form": form,
+            "page_title": "Registro de paciente",
+            "submit_label": "Crear cuenta de paciente",
+            "cancel_url": "register_choice",
+        },
+    )
+
+
+def register_doctor(request):
+    if request.user.is_authenticated:
+        return redirect("panel")
+
+    if request.method == "POST":
+        form = DoctorSelfRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(
+                request,
+                "Registro de médico completado. El perfil quedó pendiente de habilitación para agenda.",
+            )
+            return redirect("panel")
+    else:
+        form = DoctorSelfRegistrationForm()
+
+    return render(
+        request,
+        "registration/register_form.html",
+        {
+            "form": form,
+            "page_title": "Registro de médico",
+            "submit_label": "Crear cuenta de médico",
+            "cancel_url": "register_choice",
+        },
+    )

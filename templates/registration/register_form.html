@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} | Djamedica{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">{{ page_title }}</h1>
+
+    {% if form.non_field_errors %}
+        <div class="message error">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="actions">
+            <button type="submit">{{ submit_label|default:"Crear cuenta" }}</button>
+            <a href="{% url cancel_url %}" class="secondary">Cancelar</a>
+        </div>
+    </form>
+{% endblock %}

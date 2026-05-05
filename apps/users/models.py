@@ -6,6 +6,7 @@ class User(AbstractUser):
     class Role(models.TextChoices):
         ADMIN = "ADMIN", "Administrador"
         DOCTOR = "DOCTOR", "Doctor"
+        PATIENT = "PATIENT", "Paciente"
         STAFF = "STAFF", "Personal"
 
     email = models.EmailField(unique=True)

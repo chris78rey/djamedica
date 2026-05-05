@@ -1,6 +1,9 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
+
+from apps.users.models import User
 
 
 def _validate_ec_cedula(value: str) -> bool:
@@ -41,6 +44,14 @@ class Patient(models.Model):
         MALE = "M", "Masculino"
         FEMALE = "F", "Femenino"
         OTHER = "O", "Otro"
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="patient_profile",
+    )
 
     first_name = models.CharField(max_length=120)
     last_name = models.CharField(max_length=120)
@@ -113,6 +124,12 @@ class Patient(models.Model):
             qs = Patient.objects.filter(email__iexact=self.email).exclude(pk=self.pk)
             if qs.exists():
                 errors["email"] = "Ya existe otro paciente con ese correo."
+
+        if self.user_id:
+            if self.user.role != User.Role.PATIENT:
+                errors["user"] = "El usuario relacionado debe tener rol PACIENTE."
+            elif not self.user.is_active:
+                errors["user"] = "El usuario relacionado debe estar activo."
 
         if errors:
             raise ValidationError(errors)
