@@ -3,13 +3,13 @@ import os
 import sys
 
 
-def main():
+def main() -> None:
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
         raise ImportError(
-            "No se pudo importar Django. Verificar que el entorno virtual esté activo."
+            "No se pudo importar Django. Verificar instalación y entorno virtual."
         ) from exc
     execute_from_command_line(sys.argv)
 

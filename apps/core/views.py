@@ -7,4 +7,6 @@ def home(request):
 
 
 def health(request):
-    return JsonResponse({"status": "ok", "app": "djamedica", "framework": "django"})
+    return JsonResponse(
+        {"status": "ok", "app": "djamedica", "framework": "django"}
+    )

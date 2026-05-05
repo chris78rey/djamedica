@@ -1,4 +1,4 @@
 from django.db import models
 
-# Modelos iniciales del proyecto.
-# Aquí todavía no se agrega lógica de negocio para evitar sobreingeniería temprana.
+# Aquí se agregarán los modelos reales del sistema.
+# Por ahora se deja vacío para no fijar mal la base funcional.
