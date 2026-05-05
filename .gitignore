@@ -38,3 +38,6 @@ logs/
 # Temp
 tmp/
 temp/
+
+# Tools
+repomix-output.xml
