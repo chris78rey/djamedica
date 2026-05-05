@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} | Djamedica{% endblock %}
+
+{% block content %}
+    <div class="form-card">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">{{ page_title }}</h1>
+                <p class="muted">Revise la información antes de guardar.</p>
+            </div>
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="message error">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <div class="actions">
+                <button type="submit">{{ submit_label|default:"Guardar" }}</button>
+                <a href="{{ cancel_url }}" class="secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
