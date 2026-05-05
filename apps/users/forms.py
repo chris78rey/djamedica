@@ -18,6 +18,14 @@ class UserCreateForm(UserCreationForm):
             "is_staff",
         )
 
+    def clean_email(self):
+        email = (self.cleaned_data.get("email") or "").strip().lower()
+        if not email:
+            raise forms.ValidationError("El correo es obligatorio.")
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("Ya existe un usuario con ese correo.")
+        return email
+
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:
@@ -32,3 +40,12 @@ class UserUpdateForm(forms.ModelForm):
             "is_active",
             "is_staff",
         )
+
+    def clean_email(self):
+        email = (self.cleaned_data.get("email") or "").strip().lower()
+        if not email:
+            raise forms.ValidationError("El correo es obligatorio.")
+        qs = User.objects.filter(email__iexact=email).exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError("Ya existe otro usuario con ese correo.")
+        return email

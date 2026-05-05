@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle usuario | Djamedica{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Detalle de usuario</h1>
+
+    <table>
+        <tbody>
+            <tr><th>ID</th><td>{{ item.id }}</td></tr>
+            <tr><th>Usuario</th><td>{{ item.username }}</td></tr>
+            <tr><th>Correo</th><td>{{ item.email }}</td></tr>
+            <tr><th>Nombres</th><td>{{ item.first_name }}</td></tr>
+            <tr><th>Apellidos</th><td>{{ item.last_name }}</td></tr>
+            <tr><th>Rol</th><td>{{ item.role }}</td></tr>
+            <tr><th>Teléfono</th><td>{{ item.phone }}</td></tr>
+            <tr><th>Activo</th><td>{{ item.is_active }}</td></tr>
+            <tr><th>Staff</th><td>{{ item.is_staff }}</td></tr>
+            <tr><th>Superusuario</th><td>{{ item.is_superuser }}</td></tr>
+            <tr><th>Último ingreso</th><td>{{ item.last_login }}</td></tr>
+            <tr><th>Fecha alta</th><td>{{ item.date_joined }}</td></tr>
+        </tbody>
+    </table>
+
+    <div class="actions">
+        <a href="{% url 'users:edit' item.id %}">Editar</a>
+        <a href="{% url 'users:manage_list' %}" class="secondary">Volver</a>
+    </div>
+{% endblock %}

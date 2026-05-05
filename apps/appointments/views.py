@@ -2,7 +2,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.http import JsonResponse
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from apps.core.mixins import (
     ClinicalAccessRequiredMixin,
@@ -125,6 +125,24 @@ class AppointmentManageListView(ClinicalAccessRequiredMixin, ListView):
         )
         context["specialty_choices"] = Specialty.objects.filter(is_active=True).order_by("name")
         return context
+
+
+class AppointmentDetailView(ClinicalAccessRequiredMixin, DetailView):
+    model = Appointment
+    template_name = "appointments/detail.html"
+    context_object_name = "item"
+
+    def get_queryset(self):
+        qs = Appointment.objects.select_related(
+            "patient",
+            "doctor__user",
+            "specialty",
+            "created_by",
+        )
+        user = self.request.user
+        if getattr(user, "role", None) == "DOCTOR" and not user.is_superuser:
+            qs = qs.filter(doctor__user=user)
+        return qs
 
 
 class AppointmentCreateView(StaffOrAdminRequiredMixin, SuccessMessageMixin, CreateView):

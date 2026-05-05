@@ -2,7 +2,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.http import JsonResponse
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from apps.core.mixins import AdminRequiredMixin, DeleteSuccessMessageMixin
 from .forms import SpecialtyForm
@@ -57,6 +57,12 @@ class SpecialtyManageListView(AdminRequiredMixin, ListView):
         context["filter_q"] = self.request.GET.get("q", "").strip()
         context["filter_is_active"] = self.request.GET.get("is_active", "").strip()
         return context
+
+
+class SpecialtyDetailView(AdminRequiredMixin, DetailView):
+    model = Specialty
+    template_name = "specialties/detail.html"
+    context_object_name = "item"
 
 
 class SpecialtyCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):

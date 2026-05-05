@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle especialidad | Djamedica{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Detalle de especialidad</h1>
+
+    <table>
+        <tbody>
+            <tr><th>ID</th><td>{{ item.id }}</td></tr>
+            <tr><th>Nombre</th><td>{{ item.name }}</td></tr>
+            <tr><th>Descripción</th><td>{{ item.description }}</td></tr>
+            <tr><th>Activa</th><td>{{ item.is_active }}</td></tr>
+            <tr><th>Fecha creación</th><td>{{ item.created_at }}</td></tr>
+        </tbody>
+    </table>
+
+    <div class="actions">
+        <a href="{% url 'specialties:edit' item.id %}">Editar</a>
+        <a href="{% url 'specialties:manage_list' %}" class="secondary">Volver</a>
+    </div>
+{% endblock %}

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load querystring %}
 
 {% block title %}Usuarios | Djamedica{% endblock %}
 
@@ -63,6 +62,7 @@
                     <td>{{ item.role }}</td>
                     <td>{{ item.is_active }}</td>
                     <td class="actions">
+                        <a href="{% url 'users:detail' item.id %}">Ver</a>
                         <a href="{% url 'users:edit' item.id %}">Editar</a>
                         <a href="{% url 'users:delete' item.id %}" class="danger">Eliminar</a>
                     </td>

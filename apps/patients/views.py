@@ -2,7 +2,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.http import JsonResponse
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from apps.core.mixins import (
     ClinicalAccessRequiredMixin,
@@ -76,6 +76,12 @@ class PatientManageListView(ClinicalAccessRequiredMixin, ListView):
         context["filter_is_active"] = self.request.GET.get("is_active", "").strip()
         context["document_type_choices"] = Patient.DocumentType.choices
         return context
+
+
+class PatientDetailView(ClinicalAccessRequiredMixin, DetailView):
+    model = Patient
+    template_name = "patients/detail.html"
+    context_object_name = "item"
 
 
 class PatientCreateView(StaffOrAdminRequiredMixin, SuccessMessageMixin, CreateView):

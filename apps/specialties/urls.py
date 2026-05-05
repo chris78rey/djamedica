@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     SpecialtyCreateView,
     SpecialtyDeleteView,
+    SpecialtyDetailView,
     SpecialtyManageListView,
     SpecialtyUpdateView,
     list_specialties,
@@ -16,6 +17,7 @@ urlpatterns = [
     path("summary/", summary_specialties, name="summary"),
     path("manage/", SpecialtyManageListView.as_view(), name="manage_list"),
     path("manage/new/", SpecialtyCreateView.as_view(), name="create"),
+    path("manage/<int:pk>/", SpecialtyDetailView.as_view(), name="detail"),
     path("manage/<int:pk>/edit/", SpecialtyUpdateView.as_view(), name="edit"),
     path("manage/<int:pk>/delete/", SpecialtyDeleteView.as_view(), name="delete"),
 ]

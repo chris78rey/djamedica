@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle paciente | Djamedica{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Detalle de paciente</h1>
+
+    <table>
+        <tbody>
+            <tr><th>ID</th><td>{{ item.id }}</td></tr>
+            <tr><th>Nombre</th><td>{{ item.full_name }}</td></tr>
+            <tr><th>Tipo documento</th><td>{{ item.document_type }}</td></tr>
+            <tr><th>Número documento</th><td>{{ item.document_number }}</td></tr>
+            <tr><th>Fecha nacimiento</th><td>{{ item.birth_date }}</td></tr>
+            <tr><th>Sexo</th><td>{{ item.sex }}</td></tr>
+            <tr><th>Teléfono</th><td>{{ item.phone }}</td></tr>
+            <tr><th>Correo</th><td>{{ item.email }}</td></tr>
+            <tr><th>Dirección</th><td>{{ item.address }}</td></tr>
+            <tr><th>Contacto emergencia</th><td>{{ item.emergency_contact_name }}</td></tr>
+            <tr><th>Teléfono emergencia</th><td>{{ item.emergency_contact_phone }}</td></tr>
+            <tr><th>Activo</th><td>{{ item.is_active }}</td></tr>
+            <tr><th>Creado</th><td>{{ item.created_at }}</td></tr>
+            <tr><th>Actualizado</th><td>{{ item.updated_at }}</td></tr>
+        </tbody>
+    </table>
+
+    <div class="actions">
+        {% if request.user.is_superuser or request.user.role == "ADMIN" or request.user.role == "STAFF" %}
+            <a href="{% url 'patients:edit' item.id %}">Editar</a>
+        {% endif %}
+        <a href="{% url 'patients:manage_list' %}" class="secondary">Volver</a>
+    </div>
+{% endblock %}

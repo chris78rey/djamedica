@@ -46,6 +46,7 @@
                     <td>{{ item.name }}</td>
                     <td>{{ item.is_active }}</td>
                     <td class="actions">
+                        <a href="{% url 'specialties:detail' item.id %}">Ver</a>
                         <a href="{% url 'specialties:edit' item.id %}">Editar</a>
                         <a href="{% url 'specialties:delete' item.id %}" class="danger">Eliminar</a>
                     </td>

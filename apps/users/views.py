@@ -2,7 +2,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.http import JsonResponse
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from apps.core.mixins import AdminRequiredMixin, DeleteSuccessMessageMixin
 from .forms import UserCreateForm, UserUpdateForm
@@ -72,6 +72,12 @@ class UserManageListView(AdminRequiredMixin, ListView):
         context["filter_is_active"] = self.request.GET.get("is_active", "").strip()
         context["role_choices"] = User.Role.choices
         return context
+
+
+class UserDetailView(AdminRequiredMixin, DetailView):
+    model = User
+    template_name = "users/detail.html"
+    context_object_name = "item"
 
 
 class UserCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
