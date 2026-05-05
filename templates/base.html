@@ -3,20 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ project_name }}</title>
+    <title>{% block title %}Djamedica{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f5f7fb; color: #1f2937; }
+        nav { background: #0f172a; color: #fff; padding: 12px 20px; }
+        nav a { color: #fff; text-decoration: none; margin-right: 16px; }
+        .container { max-width: 1180px; margin: 24px auto; background: #fff; padding: 24px; border-radius: 10px; }
+        .actions a, .actions button {
+            display: inline-block; margin-right: 8px; padding: 8px 12px;
+            border: 0; border-radius: 6px; background: #2563eb; color: #fff; text-decoration: none;
+            cursor: pointer;
+        }
+        .actions .secondary { background: #6b7280; }
+        .actions .danger { background: #dc2626; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; }
+        th { background: #f3f4f6; }
+        form p { margin-bottom: 12px; }
+        input, select, textarea {
+            width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+        .card { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 16px; }
+        .muted { color: #6b7280; }
+        .errorlist { color: #dc2626; }
+    </style>
 </head>
 <body>
-    <h1>{{ project_name }}</h1>
-    <p>Base inicial en Django puro.</p>
+    <nav>
+        <a href="{% url 'home' %}">Inicio</a>
+        <a href="{% url 'health' %}">Health</a>
 
-    <ul>
-        <li><a href="{% url 'health' %}">Health</a></li>
-        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-        <li><a href="{% url 'users:list' %}">Usuarios</a></li>
-        <li><a href="{% url 'specialties:list' %}">Especialidades</a></li>
-        <li><a href="{% url 'patients:list' %}">Pacientes</a></li>
-        <li><a href="{% url 'doctors:list' %}">Doctores</a></li>
-        <li><a href="{% url 'appointments:list' %}">Citas</a></li>
-    </ul>
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'panel' %}">Panel</a>
+            <a href="{% url 'users:manage_list' %}">Usuarios</a>
+            <a href="{% url 'specialties:manage_list' %}">Especialidades</a>
+            <a href="{% url 'patients:manage_list' %}">Pacientes</a>
+            <a href="{% url 'doctors:manage_list' %}">Doctores</a>
+            <a href="{% url 'appointments:manage_list' %}">Citas</a>
+            <a href="{% url 'logout' %}">Salir</a>
+        {% else %}
+            <a href="{% url 'login' %}">Ingresar</a>
+        {% endif %}
+    </nav>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
 </body>
 </html>

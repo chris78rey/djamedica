@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -9,7 +10,7 @@ from apps.users.models import User
 
 
 def home(request):
-    return render(request, "base.html", {"project_name": "Djamedica"})
+    return render(request, "core/home.html", {"project_name": "Djamedica"})
 
 
 def health(request):
@@ -28,3 +29,22 @@ def dashboard(request):
             "appointments": Appointment.objects.count(),
         }
     )
+
+
+@login_required
+def panel(request):
+    user = request.user
+
+    appointments_qs = Appointment.objects.all()
+    if getattr(user, "role", None) == "DOCTOR" and not user.is_superuser:
+        appointments_qs = appointments_qs.filter(doctor__user=user)
+
+    context = {
+        "project_name": "Djamedica",
+        "users_count": User.objects.count(),
+        "specialties_count": Specialty.objects.count(),
+        "patients_count": Patient.objects.count(),
+        "doctors_count": Doctor.objects.count(),
+        "appointments_count": appointments_qs.count(),
+    }
+    return render(request, "core/panel.html", context)

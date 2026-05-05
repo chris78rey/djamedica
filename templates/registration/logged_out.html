@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Sesión cerrada | Djamedica{% endblock %}
+
+{% block content %}
+    <h1>Sesión cerrada</h1>
+    <div class="actions">
+        <a href="{% url 'login' %}">Ingresar nuevamente</a>
+    </div>
+{% endblock %}

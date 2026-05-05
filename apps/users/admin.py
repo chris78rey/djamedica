@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
+from apps.core.admin_mixins import AdminOnlyAdminMixin
 from .models import User
 
 
 @admin.register(User)
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(AdminOnlyAdminMixin, BaseUserAdmin):
     list_display = (
         "id",
         "username",

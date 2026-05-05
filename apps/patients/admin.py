@@ -1,10 +1,11 @@
 from django.contrib import admin
 
+from apps.core.admin_mixins import StaffOrAdminAdminMixin
 from .models import Patient
 
 
 @admin.register(Patient)
-class PatientAdmin(admin.ModelAdmin):
+class PatientAdmin(StaffOrAdminAdminMixin, admin.ModelAdmin):
     list_display = (
         "id",
         "document_type",

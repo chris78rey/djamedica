@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} | Djamedica{% endblock %}
+
+{% block content %}
+    <h1>{{ page_title }}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="actions">
+            <button type="submit">{{ submit_label|default:"Guardar" }}</button>
+            <a href="{{ cancel_url }}" class="secondary">Cancelar</a>
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Panel | Djamedica{% endblock %}
+
+{% block content %}
+    <h1>Panel principal</h1>
+    <p class="muted">Usuario actual: {{ request.user }}</p>
+
+    <div class="grid">
+        <div class="card">
+            <strong>Usuarios</strong>
+            <div>{{ users_count }}</div>
+        </div>
+        <div class="card">
+            <strong>Especialidades</strong>
+            <div>{{ specialties_count }}</div>
+        </div>
+        <div class="card">
+            <strong>Pacientes</strong>
+            <div>{{ patients_count }}</div>
+        </div>
+        <div class="card">
+            <strong>Doctores</strong>
+            <div>{{ doctors_count }}</div>
+        </div>
+        <div class="card">
+            <strong>Citas</strong>
+            <div>{{ appointments_count }}</div>
+        </div>
+    </div>
+{% endblock %}

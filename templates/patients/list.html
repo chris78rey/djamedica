@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Pacientes | Djamedica{% endblock %}
+
+{% block content %}
+    <h1>Pacientes</h1>
+
+    {% if request.user.is_superuser or request.user.role == "ADMIN" or request.user.role == "STAFF" %}
+        <div class="actions">
+            <a href="{% url 'patients:create' %}">Nuevo paciente</a>
+        </div>
+    {% endif %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Documento</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.document_number }}</td>
+                    <td>{{ item.full_name }}</td>
+                    <td>{{ item.phone }}</td>
+                    <td>{{ item.email }}</td>
+                    <td>{{ item.is_active }}</td>
+                    <td class="actions">
+                        {% if request.user.is_superuser or request.user.role == "ADMIN" or request.user.role == "STAFF" %}
+                            <a href="{% url 'patients:edit' item.id %}">Editar</a>
+                            <a href="{% url 'patients:delete' item.id %}" class="danger">Eliminar</a>
+                        {% else %}
+                            <span class="muted">Solo lectura</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7">No existen registros.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

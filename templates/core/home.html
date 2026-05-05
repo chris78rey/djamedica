@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio | Djamedica{% endblock %}
+
+{% block content %}
+    <h1>{{ project_name }}</h1>
+    <p class="muted">Base inicial del sistema en Django puro.</p>
+
+    <div class="actions">
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'panel' %}">Ir al panel</a>
+        {% else %}
+            <a href="{% url 'login' %}">Ingresar</a>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,5 +1,10 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
+from apps.core.mixins import AdminRequiredMixin
+from .forms import UserCreateForm, UserUpdateForm
 from .models import User
 
 
@@ -28,3 +33,44 @@ def summary_users(request):
             "active": User.objects.filter(is_active=True).count(),
         }
     )
+
+
+class UserManageListView(AdminRequiredMixin, ListView):
+    model = User
+    template_name = "users/list.html"
+    context_object_name = "items"
+    queryset = User.objects.order_by("id")
+
+
+class UserCreateView(AdminRequiredMixin, CreateView):
+    model = User
+    form_class = UserCreateForm
+    template_name = "common/form.html"
+    success_url = reverse_lazy("users:manage_list")
+    extra_context = {
+        "page_title": "Crear usuario",
+        "submit_label": "Guardar",
+        "cancel_url": reverse_lazy("users:manage_list"),
+    }
+
+
+class UserUpdateView(AdminRequiredMixin, UpdateView):
+    model = User
+    form_class = UserUpdateForm
+    template_name = "common/form.html"
+    success_url = reverse_lazy("users:manage_list")
+    extra_context = {
+        "page_title": "Editar usuario",
+        "submit_label": "Actualizar",
+        "cancel_url": reverse_lazy("users:manage_list"),
+    }
+
+
+class UserDeleteView(AdminRequiredMixin, DeleteView):
+    model = User
+    template_name = "common/confirm_delete.html"
+    success_url = reverse_lazy("users:manage_list")
+    extra_context = {
+        "page_title": "Eliminar usuario",
+        "cancel_url": reverse_lazy("users:manage_list"),
+    }

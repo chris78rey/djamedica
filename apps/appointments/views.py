@@ -1,5 +1,9 @@
 from django.http import JsonResponse
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
+from apps.core.mixins import ClinicalAccessRequiredMixin, StaffOrAdminRequiredMixin
+from .forms import AppointmentForm
 from .models import Appointment
 
 
@@ -45,3 +49,57 @@ def summary_appointments(request):
             ).count(),
         }
     )
+
+
+class AppointmentManageListView(ClinicalAccessRequiredMixin, ListView):
+    model = Appointment
+    template_name = "appointments/list.html"
+    context_object_name = "items"
+
+    def get_queryset(self):
+        qs = Appointment.objects.select_related(
+            "patient",
+            "doctor__user",
+            "specialty",
+            "created_by",
+        ).order_by("-scheduled_at")
+
+        user = self.request.user
+        if getattr(user, "role", None) == "DOCTOR" and not user.is_superuser:
+            qs = qs.filter(doctor__user=user)
+
+        return qs
+
+
+class AppointmentCreateView(StaffOrAdminRequiredMixin, CreateView):
+    model = Appointment
+    form_class = AppointmentForm
+    template_name = "common/form.html"
+    success_url = reverse_lazy("appointments:manage_list")
+    extra_context = {
+        "page_title": "Crear cita",
+        "submit_label": "Guardar",
+        "cancel_url": reverse_lazy("appointments:manage_list"),
+    }
+
+
+class AppointmentUpdateView(StaffOrAdminRequiredMixin, UpdateView):
+    model = Appointment
+    form_class = AppointmentForm
+    template_name = "common/form.html"
+    success_url = reverse_lazy("appointments:manage_list")
+    extra_context = {
+        "page_title": "Editar cita",
+        "submit_label": "Actualizar",
+        "cancel_url": reverse_lazy("appointments:manage_list"),
+    }
+
+
+class AppointmentDeleteView(StaffOrAdminRequiredMixin, DeleteView):
+    model = Appointment
+    template_name = "common/confirm_delete.html"
+    success_url = reverse_lazy("appointments:manage_list")
+    extra_context = {
+        "page_title": "Eliminar cita",
+        "cancel_url": reverse_lazy("appointments:manage_list"),
+    }

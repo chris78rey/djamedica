@@ -1,10 +1,11 @@
 from django.contrib import admin
 
+from apps.core.admin_mixins import StaffOrAdminAdminMixin
 from .models import Appointment
 
 
 @admin.register(Appointment)
-class AppointmentAdmin(admin.ModelAdmin):
+class AppointmentAdmin(StaffOrAdminAdminMixin, admin.ModelAdmin):
     list_display = (
         "id",
         "patient",
