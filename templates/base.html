@@ -248,8 +248,12 @@
                 <a href="{% url 'health' %}">Health</a>
                 {% if request.user.is_authenticated %}
                     <a href="{% url 'panel' %}">Panel</a>
-                    <a href="{% url 'users:manage_list' %}">Usuarios</a>
-                    <a href="{% url 'specialties:manage_list' %}">Especialidades</a>
+
+                    {% if request.user.is_superuser or request.user.role == "ADMIN" %}
+                        <a href="{% url 'users:manage_list' %}">Usuarios</a>
+                        <a href="{% url 'specialties:manage_list' %}">Especialidades</a>
+                    {% endif %}
+
                     <a href="{% url 'patients:manage_list' %}">Pacientes</a>
                     <a href="{% url 'doctors:manage_list' %}">Doctores</a>
                     <a href="{% url 'appointments:manage_list' %}">Citas</a>
