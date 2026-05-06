@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import FileExtensionValidator
 from django.db import models
 
 
@@ -16,6 +17,13 @@ class User(AbstractUser):
         default=Role.STAFF,
     )
     phone = models.CharField(max_length=30, blank=True)
+    profile_photo = models.ImageField(
+        upload_to="users/profile_photos/",
+        null=True,
+        blank=True,
+        validators=[FileExtensionValidator(["jpg", "jpeg", "png", "webp"])],
+        help_text="Foto de perfil del usuario.",
+    )
 
     def __str__(self) -> str:
         full_name = self.get_full_name().strip()

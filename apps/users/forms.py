@@ -63,6 +63,11 @@ class BaseSelfRegistrationForm(forms.Form):
     first_name = forms.CharField(label="Nombres", max_length=150)
     last_name = forms.CharField(label="Apellidos", max_length=150)
     phone = forms.CharField(label="Teléfono", max_length=30, required=False)
+    profile_photo = forms.ImageField(
+        label="Foto de perfil",
+        required=True,
+        help_text="Suba una imagen JPG, PNG o WEBP.",
+    )
     password1 = forms.CharField(label="Contraseña", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Confirmar contraseña", widget=forms.PasswordInput)
 
@@ -100,6 +105,7 @@ class BaseSelfRegistrationForm(forms.Form):
             last_name=self.cleaned_data["last_name"].strip(),
             role=role,
             phone=(self.cleaned_data.get("phone") or "").strip(),
+            profile_photo=self.cleaned_data.get("profile_photo"),
             is_active=True,
             is_staff=False,
         )

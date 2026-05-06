@@ -91,8 +91,23 @@ class Appointment(models.Model):
             errors["specialty"] = "La especialidad de la cita debe estar activa."
 
         if self.doctor_id and self.specialty_id:
-            if self.doctor.specialty_id != self.specialty_id:
-                errors["specialty"] = "La especialidad de la cita debe coincidir con la del doctor."
+            has_credentials = self.doctor.specialty_credentials.exists()
+
+            if has_credentials:
+                is_approved_for_specialty = self.doctor.specialty_credentials.filter(
+                    specialty_id=self.specialty_id,
+                    status="APPROVED",
+                ).exists()
+
+                if not is_approved_for_specialty:
+                    errors["specialty"] = (
+                        "El médico no tiene una credencial SENESCYT aprobada "
+                        "para esta especialidad."
+                    )
+            else:
+                # Compatibilidad con médicos antiguos creados antes de las credenciales.
+                if self.doctor.specialty_id != self.specialty_id:
+                    errors["specialty"] = "La especialidad de la cita debe coincidir con la del doctor."
 
         if not self.reason:
             errors["reason"] = "El motivo de la cita es obligatorio."

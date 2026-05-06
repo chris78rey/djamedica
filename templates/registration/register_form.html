@@ -11,6 +11,12 @@
                 <p class="muted">
                     Complete los datos solicitados. Los campos marcados con * son obligatorios.
                 </p>
+
+                {% if extra_info %}
+                    <div class="message warning" style="margin-top:10px;">
+                        {{ extra_info }}
+                    </div>
+                {% endif %}
             </div>
         </div>
 
@@ -20,7 +26,7 @@
             </div>
         {% endif %}
 
-        <form method="post" novalidate class="form-stack">
+        <form method="post" enctype="multipart/form-data" novalidate class="form-stack">
             {% csrf_token %}
 
             {% for field in form %}

@@ -113,7 +113,7 @@ def register_patient(request):
         return redirect("panel")
 
     if request.method == "POST":
-        form = PatientSelfRegistrationForm(request.POST)
+        form = PatientSelfRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             login(request, user)
@@ -139,7 +139,7 @@ def register_doctor(request):
         return redirect("panel")
 
     if request.method == "POST":
-        form = DoctorSelfRegistrationForm(request.POST)
+        form = DoctorSelfRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             login(request, user)
@@ -159,5 +159,9 @@ def register_doctor(request):
             "page_title": "Registro de médico",
             "submit_label": "Crear cuenta de médico",
             "cancel_url": "register_choice",
+            "extra_info": (
+                "Por cada especialidad declarada debe subir un PDF SENESCYT independiente. "
+                "El perfil quedará pendiente de validación administrativa."
+            ),
         },
     )
