@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.db import connection
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
@@ -19,9 +20,25 @@ def home(request):
 
 
 def health(request):
-    return JsonResponse(
-        {"status": "ok", "app": "djamedica", "framework": "django"}
-    )
+    data = {
+        "status": "ok",
+        "app": "djamedica",
+        "framework": "django",
+        "database": "unknown",
+    }
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+
+        data["database"] = "ok"
+        return JsonResponse(data)
+
+    except Exception:
+        data["status"] = "error"
+        data["database"] = "error"
+        return JsonResponse(data, status=503)
 
 
 def dashboard(request):

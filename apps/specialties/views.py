@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
-from apps.core.mixins import AdminRequiredMixin, DeleteSuccessMessageMixin
+from apps.core.mixins import AdminRequiredMixin, AuditCreateMixin, AuditUpdateMixin, DeleteSuccessMessageMixin
 from .forms import SpecialtyForm
 from .models import Specialty
 
@@ -65,7 +65,7 @@ class SpecialtyDetailView(AdminRequiredMixin, DetailView):
     context_object_name = "item"
 
 
-class SpecialtyCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
+class SpecialtyCreateView(AdminRequiredMixin, SuccessMessageMixin, AuditCreateMixin, CreateView):
     model = Specialty
     form_class = SpecialtyForm
     template_name = "common/form.html"
@@ -78,7 +78,7 @@ class SpecialtyCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
     }
 
 
-class SpecialtyUpdateView(AdminRequiredMixin, SuccessMessageMixin, UpdateView):
+class SpecialtyUpdateView(AdminRequiredMixin, SuccessMessageMixin, AuditUpdateMixin, UpdateView):
     model = Specialty
     form_class = SpecialtyForm
     template_name = "common/form.html"

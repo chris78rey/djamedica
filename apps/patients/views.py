@@ -5,6 +5,8 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from apps.core.mixins import (
+    AuditCreateMixin,
+    AuditUpdateMixin,
     ClinicalAccessRequiredMixin,
     DeleteSuccessMessageMixin,
     StaffOrAdminRequiredMixin,
@@ -84,7 +86,7 @@ class PatientDetailView(ClinicalAccessRequiredMixin, DetailView):
     context_object_name = "item"
 
 
-class PatientCreateView(StaffOrAdminRequiredMixin, SuccessMessageMixin, CreateView):
+class PatientCreateView(StaffOrAdminRequiredMixin, SuccessMessageMixin, AuditCreateMixin, CreateView):
     model = Patient
     form_class = PatientForm
     template_name = "common/form.html"
@@ -97,7 +99,7 @@ class PatientCreateView(StaffOrAdminRequiredMixin, SuccessMessageMixin, CreateVi
     }
 
 
-class PatientUpdateView(StaffOrAdminRequiredMixin, SuccessMessageMixin, UpdateView):
+class PatientUpdateView(StaffOrAdminRequiredMixin, SuccessMessageMixin, AuditUpdateMixin, UpdateView):
     model = Patient
     form_class = PatientForm
     template_name = "common/form.html"

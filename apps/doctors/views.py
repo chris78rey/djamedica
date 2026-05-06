@@ -6,6 +6,8 @@ from django.views.generic import CreateView, DeleteView, DetailView, ListView, U
 
 from apps.core.mixins import (
     AdminRequiredMixin,
+    AuditCreateMixin,
+    AuditUpdateMixin,
     ClinicalAccessRequiredMixin,
     DeleteSuccessMessageMixin,
 )
@@ -91,7 +93,7 @@ class DoctorDetailView(ClinicalAccessRequiredMixin, DetailView):
     context_object_name = "item"
 
 
-class DoctorCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
+class DoctorCreateView(AdminRequiredMixin, SuccessMessageMixin, AuditCreateMixin, CreateView):
     model = Doctor
     form_class = DoctorForm
     template_name = "common/form.html"
@@ -104,7 +106,7 @@ class DoctorCreateView(AdminRequiredMixin, SuccessMessageMixin, CreateView):
     }
 
 
-class DoctorUpdateView(AdminRequiredMixin, SuccessMessageMixin, UpdateView):
+class DoctorUpdateView(AdminRequiredMixin, SuccessMessageMixin, AuditUpdateMixin, UpdateView):
     model = Doctor
     form_class = DoctorForm
     template_name = "common/form.html"

@@ -14,7 +14,7 @@ class CoreViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content,
-            {"status": "ok", "app": "djamedica", "framework": "django"},
+            {"status": "ok", "app": "djamedica", "framework": "django", "database": "ok"},
         )
 
     def test_dashboard_endpoint(self):

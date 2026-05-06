@@ -5,6 +5,8 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from apps.core.mixins import (
+    AuditCreateMixin,
+    AuditUpdateMixin,
     ClinicalAccessRequiredMixin,
     DeleteSuccessMessageMixin,
     StaffOrAdminRequiredMixin,
@@ -145,7 +147,7 @@ class AppointmentDetailView(ClinicalAccessRequiredMixin, DetailView):
         return qs
 
 
-class AppointmentCreateView(StaffOrAdminRequiredMixin, SuccessMessageMixin, CreateView):
+class AppointmentCreateView(StaffOrAdminRequiredMixin, SuccessMessageMixin, AuditCreateMixin, CreateView):
     model = Appointment
     form_class = AppointmentForm
     template_name = "common/form.html"
@@ -162,7 +164,7 @@ class AppointmentCreateView(StaffOrAdminRequiredMixin, SuccessMessageMixin, Crea
         return super().form_valid(form)
 
 
-class AppointmentUpdateView(StaffOrAdminRequiredMixin, SuccessMessageMixin, UpdateView):
+class AppointmentUpdateView(StaffOrAdminRequiredMixin, SuccessMessageMixin, AuditUpdateMixin, UpdateView):
     model = Appointment
     form_class = AppointmentForm
     template_name = "common/form.html"
