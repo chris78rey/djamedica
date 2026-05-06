@@ -3,28 +3,64 @@
 {% block title %}Ingreso | Djamedica{% endblock %}
 
 {% block content %}
-    <div class="form-card">
-        <div class="page-header">
+    <div class="auth-layout">
+        <div class="auth-side">
             <div>
-                <h1 class="page-title">Ingreso al sistema</h1>
-                <p class="muted">Acceda con su usuario y contraseña.</p>
+                <span class="badge info">Acceso seguro</span>
+                <h1 style="font-size:42px; line-height:1; letter-spacing:-0.05em; margin:18px 0 12px;">
+                    Bienvenido a Djamedica
+                </h1>
+                <p class="muted">
+                    Ingrese para gestionar citas médicas, pacientes, doctores y especialidades según su rol.
+                </p>
+            </div>
+
+            <div>
+                <p class="muted" style="margin-bottom:0;">
+                    Si todavía no existe una cuenta, el registro puede realizarse como paciente o médico.
+                </p>
             </div>
         </div>
 
-        {% if form.non_field_errors %}
-            <div class="message error">
-                {{ form.non_field_errors }}
+        <div class="form-card" style="width:100%;">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Ingreso</h1>
+                    <p class="muted">Acceda con su usuario y contraseña.</p>
+                </div>
             </div>
-        {% endif %}
 
-        <form method="post" novalidate>
-            {% csrf_token %}
-            {{ form.as_p }}
+            {% if form.non_field_errors %}
+                <div class="message error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
 
-            <div class="actions">
-                <button type="submit">Ingresar</button>
-                <a href="{% url 'register_choice' %}" class="secondary">Crear cuenta</a>
-            </div>
-        </form>
+            <form method="post" novalidate class="form-stack">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="field {% if field.errors %}field-error{% endif %}">
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                            {% if field.field.required %}
+                                <span class="required">*</span>
+                            {% endif %}
+                        </label>
+
+                        {{ field }}
+
+                        {% for error in field.errors %}
+                            <span class="field-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <div class="actions">
+                    <button type="submit">Ingresar</button>
+                    <a href="{% url 'register_choice' %}" class="secondary">Crear cuenta</a>
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock %}

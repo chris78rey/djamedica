@@ -6,8 +6,11 @@
     <div class="form-card">
         <div class="page-header">
             <div>
-                <h1 class="page-title">{{ page_title }}</h1>
-                <p class="muted">Complete los datos solicitados. Los campos obligatorios serán validados antes de crear la cuenta.</p>
+                <span class="badge info">Registro</span>
+                <h1 class="page-title" style="margin-top:10px;">{{ page_title }}</h1>
+                <p class="muted">
+                    Complete los datos solicitados. Los campos marcados con * son obligatorios.
+                </p>
             </div>
         </div>
 
@@ -17,9 +20,29 @@
             </div>
         {% endif %}
 
-        <form method="post" novalidate>
+        <form method="post" novalidate class="form-stack">
             {% csrf_token %}
-            {{ form.as_p }}
+
+            {% for field in form %}
+                <div class="field {% if field.errors %}field-error{% endif %}">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}
+                            <span class="required">*</span>
+                        {% endif %}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <span class="helptext">{{ field.help_text|safe }}</span>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <span class="field-message">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endfor %}
 
             <div class="actions">
                 <button type="submit">{{ submit_label|default:"Crear cuenta" }}</button>
