@@ -6,34 +6,6 @@ from django.utils import timezone
 from apps.users.models import User
 
 
-def _validate_ec_cedula(value: str) -> bool:
-    if len(value) != 10 or not value.isdigit():
-        return False
-
-    province = int(value[:2])
-    third_digit = int(value[2])
-
-    if province < 1 or province > 24:
-        return False
-
-    if third_digit >= 6:
-        return False
-
-    digits = [int(d) for d in value]
-    total = 0
-
-    for i in range(9):
-        num = digits[i]
-        if i % 2 == 0:
-            num *= 2
-            if num > 9:
-                num -= 9
-        total += num
-
-    verifier = (10 - (total % 10)) % 10
-    return verifier == digits[9]
-
-
 class Patient(models.Model):
     class DocumentType(models.TextChoices):
         CEDULA = "CEDULA", "Cédula"
@@ -107,15 +79,6 @@ class Patient(models.Model):
 
         if not self.document_number:
             errors["document_number"] = "El número de documento es obligatorio."
-        else:
-            if self.document_type == self.DocumentType.CEDULA:
-                if not _validate_ec_cedula(self.document_number):
-                    errors["document_number"] = "La cédula ecuatoriana no es válida."
-            elif self.document_type == self.DocumentType.PASSPORT:
-                if not self.document_number.replace("-", "").isalnum():
-                    errors["document_number"] = "El pasaporte solo puede tener letras, números o guiones."
-                elif len(self.document_number) < 6:
-                    errors["document_number"] = "El pasaporte es demasiado corto."
 
         if self.birth_date and self.birth_date > timezone.localdate():
             errors["birth_date"] = "La fecha de nacimiento no puede estar en el futuro."
